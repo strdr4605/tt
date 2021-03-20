@@ -137,21 +137,18 @@ function _options() {
     # Help
     echo "tt - time tracker"
     echo " "
-    echo "Tracks activity time with a simple start/stop syntax. Logs to CSV. Tmux session aware."
+    echo "Tracks activity time with a simple start/stop syntax. Logs to CSV."
     echo "Allows one activity active at a time, per session."
     echo " "
     echo "usage: tt                                       # show this help"
     echo "usage: tt (--help or -h)                        # show this help"
     echo "usage: tt (--start or -s) [activity name]       # start a new activity"
+    echo "usage: tt (--pause or -p)                       # pauses current activity"
     echo "usage: tt (--done or -d or --finish or -f)      # stop and log activity"
     echo "usage: tt (--abort or -a)                       # stop activity, no log"
-    echo "usage: tt --clear-log                           # delete log of previous activities"
+    echo "usage: tt --clear-logs                          # delete log of previous activities"
     echo "usage: tt --activity-name                       # show activity for current session"
-    echo "usage: tt --shortlist                           # quick list of commands without context"
-    echo "usage: tt [activity name]                       # toggles start/stop"
-    echo "usage: tt (--list -l) [options]                 # show log of previous activities"
-    echo "    option: t                                   # summarize time by activity"
-    echo "    option: s                                   # show only current session"
+    echo "usage: tt (--logs or -l)                        # show logs of previous activities"
     ;;
 
   -p | --pause)
