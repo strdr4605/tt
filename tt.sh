@@ -98,8 +98,8 @@ function _finish() {
 
 function tt() {
   # :- means that if TT_LOGS doesn't exit, it will assign $HOME/.tt_log (~/.tt_log)
-  TT_LOGS="${TT_LOGS:-./.tt_logs}"
-  TT_SESSION="${TT_SESSION:-./.tt_session}"
+  TT_LOGS="${TT_LOGS:-$HOME/.tt_logs}"
+  TT_SESSION="${TT_SESSION:-$HOME/.tt_session}"
 
   if ! [ -f "$TT_SESSION" ]; then
     touch $TT_SESSION
