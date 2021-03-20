@@ -39,18 +39,31 @@ function _pause() {
     return
   fi
 
-  local finish_timestamp=$(date +%s)
-  local sec_diff=$(($finish_timestamp - $start_time + $elapsed_sec))
+  local pause_timestamp=$(date +%s)
+  local sec_diff=$(($pause_timestamp - $start_time + $elapsed_sec))
 
-  local sec_in_hour=3600
-  echo "start_time=${start_time}" >$TT_SESSION
+  echo "start_time=0" >$TT_SESSION
   echo "elapsed_sec=${sec_diff}" >>$TT_SESSION
   echo "activity_name=${activity_name}" >>$TT_SESSION
 
   echo "Activity $activity_name paused"
+}
 
-  echo "$sec_diff, $hour_diff"
-  echo "$start_time, $elapsed_sec, $activity_name"
+function _save() {
+  if ! [ -f "$TT_LOGS" ]; then
+    touch $TT_LOGS
+  fi
+
+  local activity_name=$1
+  local sec_diff=$2
+  local sec_in_hour=3600
+  local hour_diff=$(bc <<<"scale=2; $sec_diff / $sec_in_hour")
+
+  local log="$activity_name, $sec_diff, $hour_diff"
+
+  echo "$log"
+
+  echo "$log" >>$TT_LOGS
 }
 
 function _finish() {
@@ -59,26 +72,31 @@ function _finish() {
   local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
   local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
 
-  if [ -z ${start_time} ]; then
+  if [ -z ${activity_name} ]; then
     echo "No activity started"
+    return
+  fi
+
+  # Activity was paused
+  if [[ "$start_time" == "0" ]]; then
+    _save $activity_name $elapsed_sec
+    echo "" >$TT_SESSION
     return
   fi
 
   local finish_timestamp=$(date +%s)
   local sec_diff=$(($finish_timestamp - $start_time + $elapsed_sec))
 
-  local sec_in_hour=3600
-  local hour_diff=$(bc <<<"scale=2; $sec_diff / $sec_in_hour")
-
   echo "$sec_diff, $hour_diff"
   echo "$start_time, $elapsed_sec, $activity_name"
 
+  _save $activity_name $sec_diff
   echo "" >$TT_SESSION
 }
 
 function tt() {
-  # :- means that if TT_LOG doesn't exit, it will assign $HOME/.tt_log (~/.tt_log)
-  TT_LOG="${TT_LOG:-./.tt_log}"
+  # :- means that if TT_LOGS doesn't exit, it will assign $HOME/.tt_log (~/.tt_log)
+  TT_LOGS="${TT_LOGS:-./.tt_logs}"
   TT_SESSION="${TT_SESSION:-./.tt_session}"
 
   if ! [ -f "$TT_SESSION" ]; then
