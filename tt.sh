@@ -105,6 +105,8 @@ function tt() {
     touch $TT_SESSION
   fi
 
+  echo ""
+
   if [ $# -eq 0 ]; then
     # No parameters = show help
     _options -h
@@ -155,28 +157,34 @@ function _options() {
   -p | --pause)
     _pause
     ;;
+
   -d | --done | -f | --finish)
     _finish
     ;;
 
-  \
-    -a | --abort) ;;
+  -a | --abort)
+    echo "Abort activity"
+    echo "" >$TT_SESSION
+    ;;
 
-  \
-    -l | --log) ;;
+  -l | --logs)
+    cat $TT_LOGS
+    ;;
 
-  \
-    --clear-log)
+  --clear-logs)
     # Empty contents of log
-    >"$TIME_LOG"
+    echo "" >$TT_LOGS
     ;;
 
-  * | -s | --start)
-    # if [ $# -eq 1 ]; then
-    #   echo "Please provide activity name"
-    # else
+  -s | --start)
     _start $2
-    # fi
     ;;
+
+  *)
+    echo "!!!! Invalid option !!!!"
+    echo ""
+    _options -h
+    ;;
+
   esac
 }
