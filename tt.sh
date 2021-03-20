@@ -6,9 +6,51 @@
 
 function _start() {
   local start_timestamp=$(date +%s)
+
+  if [ -z $1 ]; then
+    local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+    if [ -z $activity_name ]; then
+      echo "No activity started"
+      return
+    else
+      echo "Restarting $activity_name"
+      local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
+      echo "start_time=${start_timestamp}" >$TT_SESSION
+      echo "elapsed_sec=${elapsed_sec}" >>$TT_SESSION
+      echo "activity_name=${activity_name}" >>$TT_SESSION
+    fi
+    return
+  fi
+
+  local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
   echo "start_time=${start_timestamp}" >$TT_SESSION
   echo "elapsed_sec=4000" >>$TT_SESSION
   echo "activity_name=$1" >>$TT_SESSION
+}
+
+function _pause() {
+  # Do we have an activity active for this session?
+  local start_time=$(grep 'start_time=' "$TT_SESSION" | sed -E "s/.*start_time=([0-9]+).*/\\1/")
+  local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
+  local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+
+  if [ -z ${start_time} ]; then
+    echo "No activity started"
+    return
+  fi
+
+  local finish_timestamp=$(date +%s)
+  local sec_diff=$(($finish_timestamp - $start_time + $elapsed_sec))
+
+  local sec_in_hour=3600
+  echo "start_time=${start_time}" >$TT_SESSION
+  echo "elapsed_sec=${sec_diff}" >>$TT_SESSION
+  echo "activity_name=${activity_name}" >>$TT_SESSION
+
+  echo "Activity $activity_name paused"
+
+  echo "$sec_diff, $hour_diff"
+  echo "$start_time, $elapsed_sec, $activity_name"
 }
 
 function _finish() {
@@ -23,7 +65,7 @@ function _finish() {
   fi
 
   local finish_timestamp=$(date +%s)
-  local sec_diff=$(($finish_timestamp - $start_time))
+  local sec_diff=$(($finish_timestamp - $start_time + $elapsed_sec))
 
   local sec_in_hour=3600
   local hour_diff=$(bc <<<"scale=2; $sec_diff / $sec_in_hour")
@@ -90,6 +132,9 @@ function _options() {
     echo "    option: s                                   # show only current session"
     ;;
 
+  -p | --pause)
+    _pause
+    ;;
   -d | --done | -f | --finish)
     _finish
     ;;
@@ -107,11 +152,11 @@ function _options() {
     ;;
 
   * | -s | --start)
-    if [ $# -eq 1 ]; then
-      echo "Please provide activity name"
-    else
-      _start $2
-    fi
+    # if [ $# -eq 1 ]; then
+    #   echo "Please provide activity name"
+    # else
+    _start $2
+    # fi
     ;;
   esac
 }
