@@ -22,7 +22,12 @@ function _start() {
     return
   fi
 
-  local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
+  # finish old activity if exists
+  local old_activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+  if ! [ -z $old_activity_name ]; then
+    _finish
+  fi
+
   echo "start_time=${start_timestamp}" >$TT_SESSION
   echo "elapsed_sec=4000" >>$TT_SESSION
   echo "activity_name=$1" >>$TT_SESSION
@@ -86,9 +91,6 @@ function _finish() {
 
   local finish_timestamp=$(date +%s)
   local sec_diff=$(($finish_timestamp - $start_time + $elapsed_sec))
-
-  echo "$sec_diff, $hour_diff"
-  echo "$start_time, $elapsed_sec, $activity_name"
 
   _save $activity_name $sec_diff
   echo "" >$TT_SESSION
