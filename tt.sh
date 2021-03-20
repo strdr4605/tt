@@ -7,6 +7,7 @@
 function _start() {
   local start_timestamp=$(date +%s)
 
+  # No activity name passed
   if [ -z $1 ]; then
     local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
     if [ -z $activity_name ]; then
@@ -126,11 +127,6 @@ function _options() {
     else
       echo $activity_name
     fi
-    ;;
-
-  --shortlist)
-    # Shows a short list of commands without context
-    echo "--help --start --done --finish --abort --list --clear-log --activity-name --shortlist"
     ;;
 
   -h | --help)
