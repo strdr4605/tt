@@ -29,7 +29,7 @@ function _start() {
   fi
 
   echo "start_time=${start_timestamp}" >$TT_SESSION
-  echo "elapsed_sec=4000" >>$TT_SESSION
+  echo "elapsed_sec=0" >>$TT_SESSION
   echo "activity_name=$1" >>$TT_SESSION
 }
 
