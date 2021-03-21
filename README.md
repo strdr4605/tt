@@ -1,6 +1,6 @@
 # tt
 
-Command line time tracker shell script
+Command line time tracker written in shell script
 
 ## Usage
 
