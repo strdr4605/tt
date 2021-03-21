@@ -58,7 +58,7 @@ echo "source $HOME/tt.sh" >>$HOME/.zshrc
 echo "source $HOME/tt.sh" >>$HOME/.bash_profile
 ```
 
-## Develoment
+## Development
 
 1. Change `tt.sh`
 2. `source ./tt.sh`
