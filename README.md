@@ -1,4 +1,4 @@
-# tt
+# tt [![HitCount](http://hits.dwyl.com/strdr4605/tt.svg)](http://hits.dwyl.com/strdr4605/tt) [![Hits-of-Code](https://hitsofcode.com/github/strdr4605/tt?branch=master)](https://hitsofcode.com/github/strdr4605/tt/view?branch=master)
 
 Command line time tracker written in shell script
 
