@@ -50,6 +50,7 @@ curl https://raw.githubusercontent.com/strdr4605/tt/master/tt.sh > $HOME/tt.sh
 ```
 
 ### Source in your shell config file
+
 ```bash
 # ZSH
 echo "source $HOME/tt.sh" >>$HOME/.zshrc
@@ -60,6 +61,6 @@ echo "source $HOME/tt.sh" >>$HOME/.bash_profile
 
 ## Development
 
-1. Change `tt.sh`
+1. Change `tt.sh` (use [shellcheck](https://www.shellcheck.net))
 2. `source ./tt.sh`
 3. `tt`

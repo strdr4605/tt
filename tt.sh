@@ -4,16 +4,16 @@
 #   Execute this file with a "sh" interpreter, using the "env" program search path to find it.
 # Now you know!
 
-function tt() {
+tt() {
   # :- means that if TT_LOGS doesn't exit, it will assign $HOME/.tt_log (~/.tt_log)
   TT_LOGS="${TT_LOGS:-$HOME/.tt_logs}"
   TT_SESSION="${TT_SESSION:-$HOME/.tt_session}"
 
   if ! [ -f "$TT_SESSION" ]; then
-    touch $TT_SESSION
+    touch "$TT_SESSION"
   fi
   if ! [ -f "$TT_LOGS" ]; then
-    echo "UTC,activity name,time spent" >$TT_LOGS
+    echo "UTC,activity name,time spent" >"$TT_LOGS"
   fi
 
   echo ""
@@ -22,20 +22,20 @@ function tt() {
     # No parameters = show help
     _options -h
   else
-    _options $1 $2
+    _options "$1" "$2"
   fi
 
   # Internal functions
-  function _options() {
+  _options() {
     case "$1" in
 
     --activity-name)
       # Shows the current activity name if there is one for this session
-      local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
-      if [ -z ${activity_name} ]; then
+      activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+      if [ -z "${activity_name}" ]; then
         echo "No activity started"
       else
-        echo $activity_name
+        echo "$activity_name"
       fi
       ;;
 
@@ -67,20 +67,20 @@ function tt() {
 
     -a | --abort)
       echo "Abort activity"
-      echo "" >$TT_SESSION
+      echo "" >"$TT_SESSION"
       ;;
 
     -l | --logs)
-      cat $TT_LOGS
+      cat "$TT_LOGS"
       ;;
 
     --clear-logs)
       echo "Logs cleared"
-      echo "UTC,activity name,time spent" >$TT_LOGS
+      echo "UTC,activity name,time spent" >"$TT_LOGS"
       ;;
 
     -s | --start)
-      _start $2
+      _start "$2"
       ;;
 
     *)
@@ -92,46 +92,46 @@ function tt() {
     esac
   }
 
-  function _start() {
-    local start_timestamp=$(date +%s)
+  _start() {
+    start_timestamp=$(date +%s)
 
     # No activity name passed
-    if [ -z $1 ]; then
-      local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
-      if [ -z $activity_name ]; then
+    if [ -z "$1" ]; then
+      activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+      if [ -z "$activity_name" ]; then
         echo "No activity started"
         return
       else
         echo "Restarting '$activity_name'"
 
-        local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
-        echo "start_time=${start_timestamp}" >$TT_SESSION
-        echo "elapsed_sec=${elapsed_sec}" >>$TT_SESSION
-        echo "activity_name=${activity_name}" >>$TT_SESSION
+        elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
+        echo "start_time=${start_timestamp}" >"$TT_SESSION"
+        echo "elapsed_sec=${elapsed_sec}" >>"$TT_SESSION"
+        echo "activity_name=${activity_name}" >>"$TT_SESSION"
       fi
       return
     fi
 
     # finish old activity if exists
-    local old_activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
-    if ! [ -z $old_activity_name ]; then
+    old_activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+    if [ -n "$old_activity_name" ]; then
       _finish
     fi
 
     echo "Starting '$1'"
 
-    echo "start_time=${start_timestamp}" >$TT_SESSION
-    echo "elapsed_sec=0" >>$TT_SESSION
-    echo "activity_name=$1" >>$TT_SESSION
+    echo "start_time=${start_timestamp}" >"$TT_SESSION"
+    echo "elapsed_sec=0" >>"$TT_SESSION"
+    echo "activity_name=$1" >>"$TT_SESSION"
   }
 
-  function _pause() {
+  _pause() {
     # Do we have an activity active for this session?
-    local start_time=$(grep 'start_time=' "$TT_SESSION" | sed -E "s/.*start_time=([0-9]+).*/\\1/")
-    local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
-    local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+    start_time=$(grep 'start_time=' "$TT_SESSION" | sed -E "s/.*start_time=([0-9]+).*/\\1/")
+    elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
+    activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
 
-    if [ -z ${start_time} ]; then
+    if [ -z "$start_time" ]; then
       echo "No activity started"
       return
     fi
@@ -141,52 +141,52 @@ function tt() {
       return
     fi
 
-    local pause_timestamp=$(date +%s)
+    pause_timestamp=$(date +%s)
 
-    local sec_diff=$(($pause_timestamp - $start_time + $elapsed_sec))
+    sec_diff=$((pause_timestamp - start_time + elapsed_sec))
 
-    echo "start_time=0" >$TT_SESSION
-    echo "elapsed_sec=${sec_diff}" >>$TT_SESSION
-    echo "activity_name=${activity_name}" >>$TT_SESSION
+    echo "start_time=0" >"$TT_SESSION"
+    echo "elapsed_sec=${sec_diff}" >>"$TT_SESSION"
+    echo "activity_name=${activity_name}" >>"$TT_SESSION"
 
     echo "Activity '$activity_name' paused"
   }
 
-  function _finish() {
+  _finish() {
     # Do we have an activity active for this session?
-    local start_time=$(grep 'start_time=' "$TT_SESSION" | sed -E "s/.*start_time=([0-9]+).*/\\1/")
-    local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
-    local activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
+    start_time=$(grep 'start_time=' "$TT_SESSION" | sed -E "s/.*start_time=([0-9]+).*/\\1/")
+    elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
+    activity_name=$(grep 'activity_name=' "$TT_SESSION" | sed -E "s/.*activity_name=(.+)$.*/\\1/")
 
-    if [ -z ${activity_name} ]; then
+    if [ -z "$activity_name" ]; then
       echo "No activity started"
       return
     fi
 
     # Activity was paused
     if [[ "$start_time" == "0" ]]; then
-      _save $activity_name $elapsed_sec
-      echo "" >$TT_SESSION
+      _save "$activity_name" "$elapsed_sec"
+      echo "" >"$TT_SESSION"
       return
     fi
 
-    local finish_timestamp=$(date +%s)
-    local sec_diff=$(($finish_timestamp - $start_time + $elapsed_sec))
+    finish_timestamp=$(date +%s)
+    sec_diff=$((finish_timestamp - start_time + elapsed_sec))
 
-    _save $activity_name $sec_diff
-    echo "" >$TT_SESSION
+    _save "$activity_name" $sec_diff
+    echo "" >"$TT_SESSION"
   }
 
-  function _save() {
-    local activity_name=$1
-    local sec_diff=$2
-    local hours=$(($sec_diff / 3600))
-    local mins=$((($sec_diff - ($hours * 3600)) / 60))
+  _save() {
+    activity_name=$1
+    sec_diff=$2
+    hours=$((sec_diff / 3600))
+    mins=$(((sec_diff - (hours * 3600)) / 60))
 
-    local utc_date=$(date -u)
+    utc_date=$(date -u)
 
     echo "$utc_date | $activity_name | ${hours}h ${mins}m"
-    local log="$utc_date,$activity_name,${hours}h ${mins}m"
-    echo "$log" >>$TT_LOGS
+    log="$utc_date,$activity_name,${hours}h ${mins}m"
+    echo "$log" >>"$TT_LOGS"
   }
 }
