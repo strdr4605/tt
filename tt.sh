@@ -74,7 +74,6 @@ tt() {
 
     *)
       echo "!!!! Invalid option !!!!"
-      echo ""
       _options -h
       ;;
     esac
