@@ -14,7 +14,8 @@ function _start() {
       echo "No activity started"
       return
     else
-      echo "Restarting $activity_name"
+      echo "Restarting '$activity_name'"
+
       local elapsed_sec=$(grep 'elapsed_sec=' "$TT_SESSION" | sed -E "s/.*elapsed_sec=([0-9]+).*/\\1/")
       echo "start_time=${start_timestamp}" >$TT_SESSION
       echo "elapsed_sec=${elapsed_sec}" >>$TT_SESSION
@@ -28,6 +29,8 @@ function _start() {
   if ! [ -z $old_activity_name ]; then
     _finish
   fi
+
+  echo "Starting '$1'"
 
   echo "start_time=${start_timestamp}" >$TT_SESSION
   echo "elapsed_sec=0" >>$TT_SESSION
@@ -45,30 +48,32 @@ function _pause() {
     return
   fi
 
+  if [[ "$start_time" == "0" ]]; then
+    echo "Activity '$activity_name' is already paused"
+    return
+  fi
+
   local pause_timestamp=$(date +%s)
+
   local sec_diff=$(($pause_timestamp - $start_time + $elapsed_sec))
 
   echo "start_time=0" >$TT_SESSION
   echo "elapsed_sec=${sec_diff}" >>$TT_SESSION
   echo "activity_name=${activity_name}" >>$TT_SESSION
 
-  echo "Activity $activity_name paused"
+  echo "Activity '$activity_name' paused"
 }
 
 function _save() {
-  if ! [ -f "$TT_LOGS" ]; then
-    touch $TT_LOGS
-  fi
-
   local activity_name=$1
   local sec_diff=$2
-  local sec_in_hour=3600
-  local hour_diff=$(bc <<<"scale=2; $sec_diff / $sec_in_hour")
+  local hours=$(($sec_diff / 3600))
+  local mins=$((($sec_diff - ($hours * 3600)) / 60))
 
-  local log="$activity_name, $sec_diff, $hour_diff"
+  local utc_date=$(date -u)
 
-  echo "$log"
-
+  echo "$utc_date | $activity_name | ${hours}h ${mins}m"
+  local log="$utc_date,$activity_name,${hours}h ${mins}m"
   echo "$log" >>$TT_LOGS
 }
 
@@ -104,6 +109,9 @@ function tt() {
 
   if ! [ -f "$TT_SESSION" ]; then
     touch $TT_SESSION
+  fi
+  if ! [ -f "$TT_LOGS" ]; then
+    echo "UTC,activity name,time spent" >$TT_LOGS
   fi
 
   echo ""
@@ -165,8 +173,8 @@ function _options() {
     ;;
 
   --clear-logs)
-    # Empty contents of log
-    echo "" >$TT_LOGS
+    echo "Logs cleared"
+    echo "UTC,activity name,time spent" >$TT_LOGS
     ;;
 
   -s | --start)
