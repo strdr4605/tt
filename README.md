@@ -41,6 +41,23 @@ usage: tt --activity-name                       # show activity for current sess
 usage: tt (--logs or -l)                        # show logs of previous activities
 ```
 
+## Installation
+
+### Download
+
+```bash
+curl https://raw.githubusercontent.com/strdr4605/tt/master/tt.sh > $HOME/tt.sh
+```
+
+### Source in your shell config file
+```bash
+# ZSH
+echo "source $HOME/tt.sh" >>$HOME/.zshrc
+
+# BASH
+echo "source $HOME/tt.sh" >>$HOME/.bash_profile
+```
+
 ## Develoment
 
 1. Change `tt.sh`
