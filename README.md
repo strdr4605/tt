@@ -2,6 +2,8 @@
 
 Command line time tracker written in shell script
 
+[Why? How?](https://strdr4605.github.io/building-a-command-line-time-tracker)
+
 ## Usage
 
 ### Start the activity
