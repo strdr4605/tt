@@ -14,12 +14,7 @@ tt() {
   if ! [ -f "$TT_LOGS" ]; then
     echo "UTC,activity name,time spent" >"$TT_LOGS"
   fi
-  if [ $# -eq 0 ]; then
-    # No parameters = show help
-    _options -h
-  else
-    _options "$1" "$2"
-  fi
+  # See end of function for starting of _options
 
   # Internal functions
   _options() {
@@ -159,4 +154,12 @@ tt() {
     log="$utc_date,$activity_name,${hours}h ${mins}m"
     echo "$log" >>"$TT_LOGS"
   }
+  
+  # Parse params
+  if [ $# -eq 0 ]; then
+    # No parameters = show help
+    _options -h
+  else
+    _options "$1" "$2"
+  fi
 }
