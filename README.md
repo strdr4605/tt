@@ -58,7 +58,7 @@ curl https://raw.githubusercontent.com/strdr4605/tt/master/tt.sh > $HOME/tt.sh
 echo "source $HOME/tt.sh" >>$HOME/.zshrc
 
 # BASH
-echo "source $HOME/tt.sh" >>$HOME/.bash_profile
+echo "source $HOME/tt.sh" >>$HOME/.bashrc
 ```
 
 ## Development
