@@ -12,7 +12,7 @@ tt() {
     touch "$TT_SESSION"
   fi
   if ! [ -f "$TT_LOGS" ]; then
-    echo "UTC,activity name,time spent" >"$TT_LOGS"
+    echo "UTC,activity name,human time spent,total seconds" >"$TT_LOGS"
   fi
   # See end of function for starting of _options
 
@@ -61,7 +61,7 @@ tt() {
       ;;
     --clear-logs)
       echo "Logs cleared"
-      echo "UTC,activity name,time spent" >"$TT_LOGS"
+      echo "UTC,activity name,human time spent,total seconds" >"$TT_LOGS"
       ;;
     -s | --start)
       _start "$2"
@@ -153,7 +153,7 @@ tt() {
     mins=$(((sec_diff - (hours * 3600)) / 60))
     utc_date=$(date -u)
     echo "$utc_date | $activity_name | ${hours}h ${mins}m"
-    log="$utc_date,$activity_name,${hours}h ${mins}m"
+    log="$utc_date,$activity_name,${hours}h ${mins}m,$sec_diff"
     echo "$log" >>"$TT_LOGS"
   }
 
