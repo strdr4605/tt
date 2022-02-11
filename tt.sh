@@ -111,16 +111,18 @@ tt() {
       echo "No activity started"
       return
     fi
-    if [[ "$start_time" == "0" ]]; then
+    if [ "$start_time" = "0" ]; then
       echo "Activity '$activity_name' is already paused"
       return
     fi
     pause_timestamp=$(date +%s)
     sec_diff=$((pause_timestamp - start_time + elapsed_sec))
+    hours=$((sec_diff / 3600))
+    mins=$(((sec_diff - (hours * 3600)) / 60))
     echo "start_time=0" >"$TT_SESSION"
     echo "elapsed_sec=${sec_diff}" >>"$TT_SESSION"
     echo "activity_name=${activity_name}" >>"$TT_SESSION"
-    echo "Activity '$activity_name' paused"
+    echo "Activity '$activity_name' paused at ${hours}h ${mins}m"
   }
 
   _finish() {
@@ -133,7 +135,7 @@ tt() {
       return
     fi
     # Activity was paused
-    if [[ "$start_time" == "0" ]]; then
+    if [ "$start_time" = "0" ]; then
       _save "$activity_name" "$elapsed_sec"
       echo "" >"$TT_SESSION"
       return
@@ -154,7 +156,7 @@ tt() {
     log="$utc_date,$activity_name,${hours}h ${mins}m"
     echo "$log" >>"$TT_LOGS"
   }
-  
+
   # Parse params
   if [ $# -eq 0 ]; then
     # No parameters = show help
