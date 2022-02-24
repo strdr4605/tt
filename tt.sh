@@ -55,7 +55,7 @@ tt() {
     -a | --abort)
       echo "Abort activity"
       echo "" >"$TT_SESSION"
-      crontab -r
+      crontab -l | grep -v "tt" | crontab -
       ;;
     -l | --logs)
       cat "$TT_LOGS"
@@ -91,7 +91,7 @@ tt() {
         echo "activity_name=${activity_name}" >>"$TT_SESSION"
         # runs on MacOS
         if [ "$(uname)" = "Darwin" ]; then
-          (printf '*/15 * * * * say "Activity from tt is active!"\n') | crontab
+          (crontab -l | grep -v "tt" ; printf '*/15 * * * * say "Activity from tt is active!"\n') | crontab -
         fi
       fi
       return
@@ -107,7 +107,7 @@ tt() {
     echo "activity_name=$1" >>"$TT_SESSION"
     # runs on MacOS
     if [ "$(uname)" = "Darwin" ]; then
-      (printf '*/15 * * * * say "Activity from tt is active!"\n') | crontab
+      (crontab -l | grep -v "tt" ; printf '*/15 * * * * say "Activity from tt is active!"\n') | crontab -
     fi
   }
 
@@ -134,7 +134,7 @@ tt() {
     echo "Activity '$activity_name' paused at ${hours}h ${mins}m"
     # runs on MacOS
     if [ "$(uname)" = "Darwin" ]; then
-      (printf '* * * * * say "Activity from tt is paused!"\n') | crontab
+      (crontab -l | grep -v "tt" ; printf '* * * * * say "Activity from tt is paused!"\n') | crontab -
     fi
   }
 
@@ -158,7 +158,7 @@ tt() {
     sec_diff=$((finish_timestamp - start_time + elapsed_sec))
     _save "$activity_name" $sec_diff
     echo "" >"$TT_SESSION"
-    crontab -r
+    crontab -l | grep -v "tt" | crontab -
   }
 
   _save() {
