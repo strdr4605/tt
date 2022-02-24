@@ -48,7 +48,7 @@ usage: tt (--logs or -l)                        # show logs of previous activiti
 ### Download
 
 ```bash
-curl https://raw.githubusercontent.com/strdr4605/tt/master/tt.sh > $HOME/tt.sh
+curl https://raw.githubusercontent.com/strdr4605/tt/latest/tt.sh > $HOME/tt.sh
 ```
 
 ### Source in your shell config file
