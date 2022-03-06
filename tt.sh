@@ -168,7 +168,7 @@ tt() {
     mins=$(((sec_diff - (hours * 3600)) / 60))
     utc_date=$(date -u)
     echo "$utc_date | $activity_name | ${hours}h ${mins}m"
-    log="$utc_date,$activity_name,${hours}h ${mins}m,$sec_diff"
+    log="$utc_date,\"$activity_name\",${hours}h ${mins}m,$sec_diff"
     echo "$log" >>"$TT_LOGS"
   }
 
