@@ -180,3 +180,20 @@ tt() {
     _options "$1" "$2"
   fi
 }
+
+# Autocomplete
+# taken https://askubuntu.com/questions/68175/how-to-create-script-with-auto-complete
+_tt() 
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--help --start --pause --done --finish --abort --clear-logs --activity-name --logs"
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _tt tt
