@@ -5,6 +5,7 @@
 # Now you know!
 
 tt() {
+  TT_VERSION="v1.1.4"
   # :- means that if TT_LOGS doesn't exit, it will assign $HOME/.tt_log (~/.tt_log)
   TT_LOGS="${TT_LOGS:-$HOME/.tt_logs}"
   TT_SESSION="${TT_SESSION:-$HOME/.tt_session}"
@@ -38,6 +39,7 @@ tt() {
       echo ""
       echo "usage: tt                                       # show this help"
       echo "usage: tt (--help or -h)                        # show this help"
+      echo "usage: tt --version                             # show tt current version"
       echo "usage: tt (--start or -s) [activity name]       # start a new activity"
       echo "usage: tt (--pause or -p)                       # pauses current activity"
       echo "usage: tt (--done or -d or --finish or -f)      # stop and log activity"
@@ -45,6 +47,9 @@ tt() {
       echo "usage: tt --clear-logs                          # delete log of previous activities"
       echo "usage: tt --activity-name                       # show activity for current session"
       echo "usage: tt (--logs or -l)                        # show logs of previous activities"
+      ;;
+    --version)
+      echo "$TT_VERSION"
       ;;
     -p | --pause)
       _pause
@@ -189,7 +194,7 @@ _tt()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--help --start --pause --done --finish --abort --clear-logs --activity-name --logs"
+    opts="--help --start --pause --done --finish --abort --clear-logs --activity-name --logs --version"
 
     if [[ ${cur} == -* ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
