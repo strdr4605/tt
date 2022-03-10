@@ -34,6 +34,7 @@ Allows one activity active at a time, per session.
 
 usage: tt                                       # show this help
 usage: tt (--help or -h)                        # show this help
+usage: tt --version                             # show tt current version
 usage: tt (--start or -s) [activity name]       # start a new activity
 usage: tt (--pause or -p)                       # pauses current activity
 usage: tt (--done or -d or --finish or -f)      # stop and log activity
