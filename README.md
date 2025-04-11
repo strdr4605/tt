@@ -1,4 +1,4 @@
-# tt [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fstrdr4605%2Ftt&count_bg=%2379C83D&title_bg=%2379C83D&icon=powershell.svg&icon_color=%23E7E7E7&title=tt&edge_flat=false)](https://hits.seeyoufarm.com) [![Hits-of-Code](https://hitsofcode.com/github/strdr4605/tt?branch=master)](https://hitsofcode.com/github/strdr4605/tt/view?branch=master)
+# tt [![Hits-of-Code](https://hitsofcode.com/github/strdr4605/tt?branch=master)](https://hitsofcode.com/github/strdr4605/tt/view?branch=master)
 
 Command-line time tracker written in shell script
 
