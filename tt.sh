@@ -1,11 +1,11 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # First 2 chars in the file are called Shebang https://en.wikipedia.org/wiki/Shebang_%28Unix%29
 # In this case:
-#   Execute this file with a "sh" interpreter, using the "env" program search path to find it.
+#   Execute this file with a "bash" interpreter, using the "env" program search path to find it.
 # Now you know!
 
 tt() {
-  TT_VERSION="v1.1.4"
+  TT_VERSION="v1.1.5"
   # :- means that if TT_LOGS doesn't exit, it will assign $HOME/.tt_log (~/.tt_log)
   TT_LOGS="${TT_LOGS:-$HOME/.tt_logs}"
   TT_SESSION="${TT_SESSION:-$HOME/.tt_session}"
@@ -96,7 +96,10 @@ tt() {
         echo "activity_name=${activity_name}" >>"$TT_SESSION"
         # runs on MacOS
         if [ "$(uname)" = "Darwin" ]; then
-          (crontab -l | grep -v "tt" ; printf '*/15 * * * * say "Activity from tt is active!"\n') | crontab -
+          (
+            crontab -l | grep -v "tt"
+            printf '*/15 * * * * say "Activity from tt is active!"\n'
+          ) | crontab -
         fi
       fi
       return
@@ -112,7 +115,10 @@ tt() {
     echo "activity_name=$1" >>"$TT_SESSION"
     # runs on MacOS
     if [ "$(uname)" = "Darwin" ]; then
-      (crontab -l | grep -v "tt" ; printf '*/15 * * * * say "Activity from tt is active!"\n') | crontab -
+      (
+        crontab -l | grep -v "tt"
+        printf '*/15 * * * * say "Activity from tt is active!"\n'
+      ) | crontab -
     fi
   }
 
@@ -139,7 +145,10 @@ tt() {
     echo "Activity '$activity_name' paused at ${hours}h ${mins}m"
     # runs on MacOS
     if [ "$(uname)" = "Darwin" ]; then
-      (crontab -l | grep -v "tt" ; printf '* * * * * say "Activity from tt is paused!"\n') | crontab -
+      (
+        crontab -l | grep -v "tt"
+        printf '* * * * * say "Activity from tt is paused!"\n'
+      ) | crontab -
     fi
   }
 
@@ -188,17 +197,16 @@ tt() {
 
 # Autocomplete
 # taken https://askubuntu.com/questions/68175/how-to-create-script-with-auto-complete
-_tt() 
-{
-    local cur prev opts
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--help --start --pause --done --finish --abort --clear-logs --activity-name --logs --version"
+_tt() {
+  local cur opts
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  opts="--help --start --pause --done --finish --abort --clear-logs --activity-name --logs --version"
 
-    if [[ ${cur} == -* ]] ; then
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
+  if [[ ${cur} == -* ]]; then
+    # shellcheck disable=SC2207
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    return 0
+  fi
 }
 complete -F _tt tt
